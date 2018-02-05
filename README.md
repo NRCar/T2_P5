@@ -3,7 +3,7 @@ Self-Driving Car Engineer Nanodegree Program
 
 ## Intro
 
-This repository contains my solution to the MPC Project. The goal of this project is to navigate a track in the simulator with a 100ms actuator latency. My solution allows the car to drive as fast as possible hitting 1more than 99 MPH` when the track is straight
+This repository contains my solution to the MPC Project. The goal of this project is to navigate a track in the simulator with a 100ms actuator latency. My solution allows the car to drive as fast as possible hitting `more than 99 MPH` when the track is straight
 
 ### The Model
 
