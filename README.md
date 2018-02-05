@@ -40,6 +40,7 @@ The waypoints provided by the simulator are transformed to the car coordinate sy
 ### Model Predictive Control with Latency
 
 To handle actuator latency, the solve function was modified to take addtional state information and the actuator delay. This delay and addtional state was used to compute a new start state based on that delay. [here](./src/MPC.cpp#L159). This new state was the one that was fed to the solver.
+
 ---
 
 ## Build Dependencies
