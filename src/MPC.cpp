@@ -23,7 +23,7 @@ const double Lf = 2.67;
 
 const double ref_cte = 0;
 const double ref_epsi = 0;
-const double ref_v = 100; // see if we can reach this speed
+const double ref_v = 95; // see if we can reach this speed
 
 const size_t x_start = 0;
 const size_t y_start = x_start + N;
@@ -64,24 +64,27 @@ public:
     // The part of the cost based on the reference state.
     for (size_t i = 0; i < N; i++)
     {
-      fg[0] += 1000 * CppAD::pow(vars[cte_start + i] - ref_cte, 2);
-      fg[0] += 1000 * CppAD::pow(vars[epsi_start + i] - ref_epsi, 2);
-      fg[0] += CppAD::pow(vars[v_start + i] - ref_v, 2);
+      fg[0] += 3000 * CppAD::pow(vars[cte_start + i] - ref_cte, 2);
+      fg[0] += 3000 * CppAD::pow(vars[epsi_start + i] - ref_epsi, 2);
+      fg[0] += 20 * CppAD::pow(vars[v_start + i] - ref_v, 2);
     }
 
-    // Minimize the use of actuators.
+    // Cost of the use of actuators.
     for (size_t i = 0; i < N - 1; i++)
     {
-      fg[0] += 50 * CppAD::pow(vars[delta_start + i], 2);
-      fg[0] += 50 * CppAD::pow(vars[a_start + i], 2);
+	  // Dont try to steer at high speeds :D
+      fg[0] += 1500 * CppAD::pow(vars[delta_start + i] * vars[v_start+i], 2);
+
+	  // Dont accelerate when turning
+      fg[0] += 10 * CppAD::pow(vars[a_start + i] * vars[delta_start + i], 2);
     }
 
     // Minimize the value gap between sequential actuations.
     // (how smooth the actuations are)
     for (size_t i = 0; i < N - 2; i++)
     {
-      fg[0] += 250000 * CppAD::pow(vars[delta_start + i + 1] - vars[delta_start + i], 2);
-      fg[0] += 5000 * CppAD::pow(vars[a_start + i + 1] - vars[a_start + i], 2);
+      fg[0] += 100 * CppAD::pow(vars[delta_start + i + 1] - vars[delta_start + i], 2);
+      fg[0] += 5 * CppAD::pow(vars[a_start + i + 1] - vars[a_start + i], 2);
     }
 
     // Initial constraints.
