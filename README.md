@@ -1,9 +1,48 @@
 # CarND-Controls-MPC
 Self-Driving Car Engineer Nanodegree Program
 
+## Intro
+
+This repository contains my solution to the MPC Project. The goal of this project is to navigate a track in the simulator with a 100ms actuator latency.
+
+### The Model
+
+The kinematic model includes the vehicle's x and y coordinates, orientation angle (psi), and velocity, as well as the cross-track error and psi error (epsi). Actuator outputs are acceleration and delta (steering angle). The model combines the state and actuations from the previous timestep to calculate the state for the current timestep based on the equations below:
+
+```
+x[t] = x[t-1] + v[t-1] * cos(psi[t-1]) * dt
+y[t] = y[t-1] + v[t-1] * sin(psi[t-1]) * dt
+psi[t] = psi[t-1] + v[t-1] / Lf * delta[t-1] * dt
+v[t] = v[t-1] + a[t-1] * dt
+cte[t] = f(x[t-1]) - y[t-1] + v[t-1] * sin(epsi[t-1]) * dt
+epsi[t] = psi[t] - psides[t-1] + v[t-1] * delta[t-1] / Lf * dt
+```
+
+The Actuators are: { both have values between -1 and +1 }
+- `a` : Car's acceleration.
+- `delta` : Steering angle.
+
+The values together form the current state of the system.
+
+The cost was computed using the equations and weights (./src/MPC.cpp#L64).
+The main factor that helped was to penalize turns with high speed and accelation during turns. Without this penalty the car usually flew out at high speed. This ensured that the car would accelate and decelarate properly depending on the curve of the road.
+
+The weights were tuned manually until the car was able to drive properly on the road.
+
+### Timestep Length and Elapsed Duration (N & dt)
+
+The number of points(`N`) and the time interval(`dt`) define the prediction steps. The number of points impacts the delay in predition. The values that were suggested in the project walkthrough i.e using 10 and 0.1 seem to work really well without taking too long or giving bad results. Adjusting either N or dt (even by small amounts) often produced erratic behavior. Other values tried include 20 / 0.05, 8 / 0.125. The actual delay is 100ms so prediction in steps less than that value do not really help.
+
+### Polynomial Fitting and MPC Preprocessing
+
+The waypoints provided by the simulator are transformed to the car coordinate system at (./src/main.cpp#L119). Then a 3rd-degree polynomial is fitted to the transformed waypoints. These polynomial coefficients are used to calculate the `cte` and `epsi` and create a reference trajectory.
+
+### Model Predictive Control with Latency
+
+To handle actuator latency, the solve function was modified to take addtional state information and the actuator delay. This delay and addtional state was used to compute a new start state based on that delay. (./src/MPC.cpp#L159). This new state was the one that was fed to the solver.
 ---
 
-## Dependencies
+## Build Dependencies
 
 * cmake >= 3.5
  * All OSes: [click here for installation instructions](https://cmake.org/install/)
