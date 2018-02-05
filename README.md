@@ -24,7 +24,7 @@ The Actuators are: { both have values between -1 and +1 }
 
 The values together form the current state of the system.
 
-The cost was computed using the equations and weights (./src/MPC.cpp#L64).
+The cost was computed using the equations and weights [here](./src/MPC.cpp#L64).
 The main factor that helped was to penalize turns with high speed and accelation during turns. Without this penalty the car usually flew out at high speed. This ensured that the car would accelate and decelarate properly depending on the curve of the road.
 
 The weights were tuned manually until the car was able to drive properly on the road.
@@ -35,11 +35,11 @@ The number of points(`N`) and the time interval(`dt`) define the prediction step
 
 ### Polynomial Fitting and MPC Preprocessing
 
-The waypoints provided by the simulator are transformed to the car coordinate system at (./src/main.cpp#L119). Then a 3rd-degree polynomial is fitted to the transformed waypoints. These polynomial coefficients are used to calculate the `cte` and `epsi` and create a reference trajectory.
+The waypoints provided by the simulator are transformed to the car coordinate system at [here](./src/main.cpp#L119). Then a 3rd-degree polynomial is fitted to the transformed waypoints. These polynomial coefficients are used to calculate the `cte` and `epsi` and create a reference trajectory.
 
 ### Model Predictive Control with Latency
 
-To handle actuator latency, the solve function was modified to take addtional state information and the actuator delay. This delay and addtional state was used to compute a new start state based on that delay. (./src/MPC.cpp#L159). This new state was the one that was fed to the solver.
+To handle actuator latency, the solve function was modified to take addtional state information and the actuator delay. This delay and addtional state was used to compute a new start state based on that delay. [here](./src/MPC.cpp#L159). This new state was the one that was fed to the solver.
 ---
 
 ## Build Dependencies
